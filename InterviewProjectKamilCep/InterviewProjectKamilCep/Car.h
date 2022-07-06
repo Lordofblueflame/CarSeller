@@ -13,20 +13,20 @@ class Car
 	std::string registrationDate;
 	double firstPrice;
 	double degradation;
-	bool avilability;
+	bool availability;
 public:
 
-	Car(std::string Model, std::string RegDate, double Price, double Degradation, bool Avilability)
+	Car(std::string Model, std::string RegDate, double Price, double Degradation, bool Availability)
 	{
 		Car::model = Model;
 		Car::registrationDate = RegDate;
 		Car::firstPrice = Price;
 		Car::degradation = Degradation;
-		Car::avilability = Avilability;
+		Car::availability = Availability;
 	}
 	void ShowInfo();
 
-	void ChangeAvilability(bool Avilability);
+	void ChangeAvailability(bool Availability);
 
 	double CurrentPrice();
 
@@ -34,14 +34,14 @@ public:
 
 	void PriceDegradation();
 
-	bool ShowAvilability();
+	bool ShowAvailability();
 
 	void ChangePrice(double change);
 };
 
-inline bool Car::ShowAvilability()
+inline bool Car::ShowAvailability()
 {
-	return Car::avilability;
+	return Car::availability;
 }
 
 inline void Car::ChangePrice(double change)
@@ -49,14 +49,14 @@ inline void Car::ChangePrice(double change)
 	Car::firstPrice = change;
 }
 
-inline void Car::ChangeAvilability(bool Avilability)
+inline void Car::ChangeAvailability(bool Availability)
 {
-	Car::avilability = Avilability;
+	Car::availability = Availability;
 }
 
 inline double Car::CurrentPrice()
 {
-	return Car::firstPrice - (Car::firstPrice *(Car::degradation/100));
+	return Car::firstPrice - (Car::firstPrice *(Car::degradation/1000));
 }
 
 inline void Car::ShowInfo()
@@ -76,10 +76,10 @@ inline void Car::PriceDegradation()
 {
 	std::this_thread::sleep_for(std::chrono::seconds(30));
 	
-	for (int i = 0; i < 20; i++) {
+	for (int i = 0; i < 200; i++) {
 
 		std::unique_lock<std::mutex> lock(mutex1);
-		if (Car::degradation < 20 && Car::avilability == true)
+		if (Car::ShowDegradation() < 200 && Car::ShowAvailability() == true)
 			Car::degradation++;
 		else
 			break;

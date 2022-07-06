@@ -88,8 +88,8 @@ inline int Owner::SellCar(int choice, Owner *owner)
 
             Owner::money += Own->second.CurrentPrice();
 
-            carSum->second.ChangeAvilability(false);
-            carSumClient->second.ChangeAvilability(true);
+            carSum->second.ChangeAvailability(false);
+            carSumClient->second.ChangeAvailability(true);
             carSum->second.ChangePrice(Own->second.CurrentPrice());
 
             Owner::ownedCars.erase(choice);
@@ -106,7 +106,7 @@ inline void Owner::ShowCarsForSellers()
 {
     if (!ownedCars.empty())
         for (auto n : ownedCars) {
-            if (n.second.ShowAvilability() == true) {
+            if (n.second.ShowAvailability() == true) {
                 std::cout << n.first << ". ";
                 n.second.ShowInfo();
             }
@@ -121,7 +121,7 @@ inline void Owner::SummaryOfTheDay()
     std::cout << "#Owner Data : " << Owner::name << " " << Owner::surrname << " \n";
     if (!Owner::carSummary.empty())
         for (auto& n : Owner::carSummary) {
-            if (n.second.ShowAvilability() == true) {
+            if (n.second.ShowAvailability() == true) {
                 std::cout 
                     << "#Type of transaction : "
                     << "Bought " << "\n"

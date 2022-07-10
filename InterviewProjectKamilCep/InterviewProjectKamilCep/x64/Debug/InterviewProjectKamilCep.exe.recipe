@@ -2,7 +2,11 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
+<<<<<<< HEAD
       <FullPath>C:\Users\Kamil\Source\Repos\CarSeller\InterviewProjectKamilCep\x64\Debug\InterviewProjectKamilCep.exe</FullPath>
+=======
+      <FullPath>D:\C++\CarSeller\InterviewProjectKamilCep\x64\Debug\InterviewProjectKamilCep.exe</FullPath>
+>>>>>>> affbf28cea2e1943cde992f8b0c2ec1468059170
     </ProjectOutput>
   </ProjectOutputs>
   <ContentFiles />

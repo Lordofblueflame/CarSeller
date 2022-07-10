@@ -1,9 +1,7 @@
 #include <iostream>
-#include <iomanip>
-#include <math.h>
-#include <thread>
 #include <mutex>
-#pragma warning(disable : 4996)
+#include <thread>
+
 
 std::mutex mutex1;
 

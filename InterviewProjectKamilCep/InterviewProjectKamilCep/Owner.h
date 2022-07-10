@@ -1,11 +1,5 @@
-#include <utility>
 #include <map>
 #include <algorithm>
-#include <numeric>
-#include <future>
-#include <string>
-#include <mutex>
-#include <thread>
 
 
 class Owner
@@ -107,7 +101,9 @@ inline void Owner::ShowCarsForSellers()
     if (!ownedCars.empty())
         for (auto n : ownedCars) {
             if (n.second.ShowAvilability() == true) {
-                std::cout << n.first << ". ";
+                std::cout 
+                    << n.first 
+                    << ". ";
                 n.second.ShowInfo();
             }
         }

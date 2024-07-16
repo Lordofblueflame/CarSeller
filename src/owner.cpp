@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "owner.h"
+#include "include\owner.h"
 
 Owner::Owner(std::string Name, std::string Surrname, double Money)
     : name(Name), surrname(Surrname), money(Money) {

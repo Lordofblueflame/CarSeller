@@ -2,11 +2,9 @@ CXX = g++
 CXXFLAGS = -std=c++17 -I./include
 PCH = include/pch.h
 PCH_GCH = include/pch.h.gch
-SOURCES = src/business_logic/car.cpp \
-          src/business_logic/owner.cpp \
-          src/main.cpp
+SOURCES = $(wildcard src/*.cpp)
 OBJECTS = $(SOURCES:.cpp=.o)
-TARGET = my_program
+TARGET = my_program.exe
 
 all: $(TARGET)
 
@@ -20,6 +18,10 @@ $(PCH_GCH): $(PCH)
 	$(CXX) -x c++-header $(PCH) -o $(PCH_GCH)
 
 clean:
+ifeq ($(OS),Windows_NT)
+	del /F /Q $(subst /,\,$(OBJECTS)) $(subst /,\,$(TARGET)) $(subst /,\,$(PCH_GCH))
+else
 	rm -f $(OBJECTS) $(TARGET) $(PCH_GCH)
+endif
 
 .PHONY: clean

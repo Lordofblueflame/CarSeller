@@ -1,45 +1,55 @@
 #include "include\car.h"
 
-bool Car::ShowAvailability()
+Car::Car(const std::string& model, const std::string& regDate, double price, double degradation, bool availability, std::shared_ptr<EventEmitter> emitter)
+    : m_model(model), m_registrationDate(regDate), m_firstPrice(price), m_degradation(degradation), m_availability(availability), m_emitter(emitter)
 {
-	return Car::availability;
+    BOOST_LOG_TRIVIAL(info) << "Car constructor";
+    m_emitter->AddListener([this]() { this->PriceDegradation(); });
+}
+
+Car::~Car() {
+    BOOST_LOG_TRIVIAL(info) << "Car destructor";
+}
+
+void Car::ChangeAvailability(bool availability)
+{
+    m_availability = availability;
+}
+
+void Car::ShowInfo() const
+{
+    std::cout << "#Model : " << m_model << "\n"
+              << "#Registration date : " << m_registrationDate << "\n"
+              << "#Price : " << CurrentPrice() << "\n"
+              << "#Degradation : " << ShowDegradation() << "\n";
+}
+
+double Car::CurrentPrice() const
+{
+    return m_firstPrice - (m_firstPrice * (m_degradation / 1000));
 }
 
 void Car::ChangePrice(double change)
 {
-	Car::firstPrice = change;
+	Car::m_firstPrice = change;
 }
 
-void Car::ChangeAvailability(bool Availability)
+double Car::ShowDegradation() const
 {
-	Car::availability = Availability;
+    return m_degradation;
 }
 
-double Car::CurrentPrice()
-{
-	return Car::firstPrice - (Car::firstPrice *(Car::degradation/1000));
-}
-
-void Car::ShowInfo()
-{
-	std::cout 
-		<< "#Model : " << Car::model << "\n"
-		<< "#Registration date : " << Car::registrationDate << "\n"
-		<< "#Price : " << Car::CurrentPrice() << "\n";
-		//<< " Degradation : " << Car::ShowDegradation() << "\n";
-}
-
-double Car::ShowDegradation()
-{
-	return Car::degradation;
-}
 void Car::PriceDegradation()
 {
-	for (int i = 0; i < 200; i++) {
+    if (ShowDegradation() < 200 && m_availability) {
+        m_degradation++;
+        BOOST_LOG_TRIVIAL(info) << " Degradation for model: " << this->m_model 
+                                << "\n Degradation by: " << this->ShowDegradation() 
+                                << "\n Current Price: " << this->CurrentPrice();
+    }
+}
 
-		if (Car::ShowDegradation() < 200 && Car::ShowAvailability() == true)
-			Car::degradation++;
-		else
-			break;
-	}
+bool Car::ShowAvailability() const
+{
+    return m_availability;
 }

@@ -8,22 +8,22 @@ class Owner
 {
 public:
     Owner() = default;
-    Owner(std::string Name, std::string Surrname, double Money);
+    Owner(std::string Name, std::string Surname, double Money);
     
+    void MyMoney() const;
+    int AddCar(std::shared_ptr<Car> car);
     int BuyCar(Car car);
-    int AddCar(Car car);
-    int SellCar(int choice, Owner *owner);
-    void ShowCarsForSellers();
-    void SummaryOfTheDay();
-    void MyMoney();
-private:  
+    int SellCar(int choice, Owner* owner);
+    void ShowCarsForSellers() const;
+    void SummaryOfTheDay() const;
 
-    std::string name;
-    std::string surrname;
-    double money;
-    int amountOfCars = 0;
-    std::map<int,Car> ownedCars;
-    std::map<int,Car> carSummary;
+private:
+    std::string m_name;
+    std::string m_surname;
+    double m_money;
+    int m_amountOfCars = 0;
+    std::map<int, std::shared_ptr<Car>> m_ownedCars;
+    std::map<int, std::shared_ptr<Car>> m_carSummary;
 };
 
 #endif // OWNER_H

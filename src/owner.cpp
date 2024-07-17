@@ -1,111 +1,99 @@
-#include "pch.h"
 #include "include\owner.h"
+#include "include\car.h"
 
-Owner::Owner(std::string Name, std::string Surrname, double Money)
-    : name(Name), surrname(Surrname), money(Money) {
-        
-    }
-
-void Owner::MyMoney()
-{
-    std::cout << "My money : " 
-        << Owner::money 
-        << " \n";
+Owner::Owner(std::string Name, std::string Surname, double Money)
+    : m_name(Name), m_surname(Surname), m_money(Money) {
 }
 
-int Owner::AddCar(Car car)
+void Owner::MyMoney() const
 {
-    Owner::amountOfCars++;
-    Owner::carSummary.insert({ Owner::amountOfCars, car });
-    Owner::ownedCars.insert({ Owner::amountOfCars, car });
+    std::cout << "My money: " << m_money << "\n";
+}
 
-    return Owner::amountOfCars;
+int Owner::AddCar(std::shared_ptr<Car> car)
+{
+    m_amountOfCars++;
+    m_ownedCars.insert({ m_amountOfCars, car });
+    m_carSummary.insert({ m_amountOfCars, car });
+
+    return m_amountOfCars;
 }
 
 int Owner::BuyCar(Car car)
 {
-    if (Owner::money >= car.CurrentPrice()) {
-        Owner::money = Owner::money - car.CurrentPrice();
+    if (m_money >= car.CurrentPrice()) {
+        m_money -= car.CurrentPrice();
+        m_amountOfCars++;
 
-        Owner::amountOfCars++;
+        auto carPtr = std::make_shared<Car>(car);
+        m_ownedCars.insert({ m_amountOfCars, carPtr });
+        m_carSummary.insert({ m_amountOfCars, carPtr });
 
-        Owner::carSummary.insert({ Owner::amountOfCars, car });
-        Owner::ownedCars.insert({ Owner::amountOfCars, car });
-
-        auto it = ownedCars.find(amountOfCars);
-        std::thread th1(&Car::PriceDegradation, &it->second);
-        th1.detach();
-
-        return Owner::amountOfCars;
+        return m_amountOfCars;
     }
-    std::cout << "You dont have enough money \n";
+
+    std::cout << "You don't have enough money\n";
     return 0;
 }
 
-int Owner::SellCar(int choice, Owner *owner)
+int Owner::SellCar(int choice, Owner* owner)
 {
-    if (!Owner::ownedCars.empty())
-    {
-        auto Own = Owner::ownedCars.find(choice);
-        if (Own != Owner::ownedCars.end())
-        {
-            int j = owner->BuyCar(Own->second);
-            if (j == 0)
-               return 0;
-            auto carSum = Owner::carSummary.find(choice);
-            auto carSumClient = owner->carSummary.find(j);
+    if (!m_ownedCars.empty()) {
+        auto it = m_ownedCars.find(choice);
+        if (it != m_ownedCars.end()) {
+            int newRecord = owner->BuyCar(*(it->second));
+            if (newRecord == 0)
+                return 0;
 
-            Owner::money += Own->second.CurrentPrice();
+            auto carSum = m_carSummary.find(choice);
+            auto carSumClient = owner->m_carSummary.find(newRecord);
 
-            carSum->second.ChangeAvailability(false);
-            carSumClient->second.ChangeAvailability(true);
-            carSum->second.ChangePrice(Own->second.CurrentPrice());
+            m_money += it->second->CurrentPrice();
 
-            Owner::ownedCars.erase(choice);
+            carSum->second->ChangeAvailability(false);
+            carSumClient->second->ChangeAvailability(true); 
+            carSum->second->ChangePrice(it->second->CurrentPrice()); 
+
+            m_ownedCars.erase(it);
+        } else {
+            std::cout << "Car not found\n";
         }
-        else
-            std::cout << "Not Found";
+    } else {
+        std::cout << "You don't have any cars to sell\n";
     }
-    else
-        std::cout << "You've got no cars to sell\n";
     return 0;
 }
 
-void Owner::ShowCarsForSellers()
+void Owner::ShowCarsForSellers() const
 {
-    if (!ownedCars.empty())
-        for (auto n : ownedCars) {
-            if (n.second.ShowAvailability() == true) {
-                std::cout << n.first << ". ";
-                n.second.ShowInfo();
+    if (!m_ownedCars.empty()) {
+        for (const auto& pair : m_ownedCars) {
+            if (pair.second->ShowAvailability()) {
+                std::cout << pair.first << ". ";
+                pair.second->ShowInfo();
             }
         }
-    else
-        std::cout << "You've got no cars\n";
+    } else {
+        std::cout << "You don't have any cars\n";
+    }
 }
 
-void Owner::SummaryOfTheDay()
+void Owner::SummaryOfTheDay() const
 {
-
-    std::cout << "#Owner Data : " << Owner::name << " " << Owner::surrname << " \n";
-    if (!Owner::carSummary.empty())
-        for (auto& n : Owner::carSummary) {
-            if (n.second.ShowAvailability() == true) {
-                std::cout 
-                    << "#Type of transaction : "
-                    << "Bought " << "\n"
-                    << "#Record in Base: " << n.first << ". \n";
-                    n.second.ShowInfo();
+    std::cout << "#Owner Data: " << m_name << " " << m_surname << "\n";
+    if (!m_carSummary.empty()) {
+        for (const auto& pair : m_carSummary) {
+            if (pair.second->ShowAvailability()) { 
+                std::cout << "#Type of transaction: Bought\n";
+            } else {
+                std::cout << "#Type of transaction: Sold\n";
             }
-            else {
-                std::cout 
-                    << "# Type of transaction : "
-                    << "Sold " << "\n"
-                    << "#Record in Base: " << n.first << ". \n";
-                    n.second.ShowInfo();
-            }
+            std::cout << "#Record in Base: " << pair.first << ".\n";
+            pair.second->ShowInfo();
             std::cout << "\n";
         }
-    else
-        std::cout << "You've got no cars\n";
+    } else {
+        std::cout << "You don't have any cars\n";
+    }
 }
+

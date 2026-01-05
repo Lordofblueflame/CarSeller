@@ -9,3 +9,6 @@
 .vscode
 obj
 bin
+.vs
+out
+build

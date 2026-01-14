@@ -3,14 +3,17 @@
 #include "controller/MarketController.hpp"
 #include "infrastructure/EventEmitter.hpp"
 #include "view/View.hpp"
+
 #include <memory>
 
 int main() {
     EventEmitter emitter;
 
+    // Create cars
     auto car1 = std::make_shared<Car>("BMW", 100000);
     auto car2 = std::make_shared<Car>("Audi", 80000);
 
+    // Degrade cars automatically
     emitter.AddListener([car1]() { car1->Degrade(); });
     emitter.AddListener([car2]() { car2->Degrade(); });
 
@@ -21,16 +24,24 @@ int main() {
 
     View view;
 
-    view.AddMenuItem("Show Alice's Cars", [&]() {
+    // Live display
+    view.AddLiveDisplay([&]() {
+        std::cout << "Alice's Cars:\n";
         for (auto& [id, car] : alice.Cars())
-            std::cout << id << ". " << car->Model() << " Price: " << car->CurrentPrice() << "\n";
+            std::cout << id << ". " << car->Model()
+            << " Price: " << car->CurrentPrice()
+            << " Available: " << car->IsAvailable() << "\n";
         });
 
-    view.AddMenuItem("Show Bob's Cars", [&]() {
+    view.AddLiveDisplay([&]() {
+        std::cout << "Bob's Cars:\n";
         for (auto& [id, car] : bob.Cars())
-            std::cout << id << ". " << car->Model() << " Price: " << car->CurrentPrice() << "\n";
+            std::cout << id << ". " << car->Model()
+            << " Price: " << car->CurrentPrice()
+            << " Available: " << car->IsAvailable() << "\n";
         });
 
+    // Menu actions
     view.AddMenuItem("Alice buys BMW", [&]() {
         controller.BuyCar(alice, car1);
         std::cout << "Alice bought BMW.\n";
@@ -41,8 +52,9 @@ int main() {
         std::cout << "Transaction done.\n";
         });
 
-    view.AddMenuItem("Exit", []() {});
+    view.AddMenuItem("Exit", [&]() { view.Stop(); });
 
+    // Run app loop
     view.Run();
 
     return 0;
